@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EV Bunk Locations Results</title>
+  <script src="auth.js"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.6.0/dist/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="index.html">EV Charging</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ml-auto">
+      </ul>
+    </div>
+  </nav>
+  <div class="container">
+    <h2 class="text-center">EV Bunk Locations Results</h2>
+    <div class="search-container">
+      <form id="searchForm">
+        <div class="form-group">
+          <label for="location">Enter Location:</label>
+          <input type="text" class="form-control" id="location" placeholder="Enter location" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Search</button>
+      </form>
+    </div>
+    <div class="map-container">
+      <div id="map"></div>
+    </div>
+    <div id="message" style="text-align: center; margin-top: 20px;"></div>
+  </div>
+  <footer class="footer">
+    <p>&copy; 2024 EV Charging Slot Booking. All rights reserved.</p>
+  </footer>
+
+  <!-- Modal -->
+  <div class="modal fade" id="detailsModal" tabindex="-1" role="dialog" aria-labelledby="detailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="detailsModalLabel">Bunk Details</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p><strong>Address:</strong> <span id="bunkAddress"></span></p>
+          <p><strong>Mobile:</strong> <span id="bunkMobile"></span></p>
+          <p><strong>Google Map Location:</strong> <a href="" target="_blank" id="bunkMapLink">View on Map</a></p>
+          <p><strong>View Slot Vacancy:</strong> <a href="slots.html" target="_blank" id="bunkSlotLink">Check Slots</a></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+  <script>
+    var map;
+    var markers = [];
+
+    $(document).ready(function() {
+      initMap();
+
+      $('#searchForm').on('submit', function(e) {
+        e.preventDefault();
+        var location = $('#location').val();
+        searchLocation(location);
+      });
+    });
+
+    function initMap() {
+      map = L.map('map').setView([12.9716, 77.5946], 13); // Set to Bangalore coordinates
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(map);
+
+      // Initial locations
+      addLocations([
+        { 
+          name: "MG Road Charging Station", 
+          coords: [12.9716, 77.5946], 
+          address: "MG Road, Bangalore, India", 
+          mobile: "+91-1234567890", 
+          mapLink: "https://www.google.com/maps?q=12.9716,77.5946", 
+          slotLink: "slots.html?station=mg-road"
+        },
+        { 
+          name: "Koramangala Charging Station", 
+          coords: [12.9352, 77.6245], 
+          address: "Koramangala, Bangalore, India", 
+          mobile: "+91-0987654321", 
+          mapLink: "https://www.google.com/maps?q=12.9352,77.6245", 
+          slotLink: "slots.html?station=koramangala"
+        },
+        { 
+          name: "Indiranagar Charging Station", 
+          coords: [12.9722, 77.6412], 
+          address: "Indiranagar, Bangalore, India", 
+          mobile: "+91-1122334455", 
+          mapLink: "https://www.google.com/maps?q=12.9722,77.6412", 
+          slotLink: "slots.html?station=indiranagar"
+        }
+      ]);
+    }
+
+    function searchLocation(location) {
+      // Example: updating map view based on search input (this should be replaced with actual geocoding)
+      var geocoder = L.Control.Geocoder.nominatim();
+      geocoder.geocode(location, function(results) {
+        if (results.length > 0) {
+          var latlng = results[0].center;
+          map.setView(latlng, 13);
+          L.marker(latlng).addTo(map).bindPopup(results[0].name).openPopup();
+        } else {
+          document.getElementById('message').innerText = 'Location not found.';
+        }
+      });
+    }
+
+    function addLocations(locations) {
+      locations.forEach(function(loc) {
+        var marker = L.marker(loc.coords).addTo(map)
+          .bindPopup(loc.name)
+          .on('click', function() {
+            $('#bunkAddress').text(loc.address);
+            $('#bunkMobile').text(loc.mobile);
+            $('#bunkMapLink').attr('href', loc.mapLink);
+            $('#bunkSlotLink').attr('href', loc.slotLink);
+            $('#detailsModal').modal('show');
+          });
+        markers.push(marker);
+      });
+    }
+  </script>
+</body>
+</html>

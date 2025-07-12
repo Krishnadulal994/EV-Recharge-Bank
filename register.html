@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Register - EV Charging Slot Booking</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="bg">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand" href="index.html">EV Charging</a>
+        </nav>
+
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6 register-container">
+                    <h2 class="text-center">Register</h2>
+                    <form id="registerForm">
+                        <div class="form-group">
+                            <input class="form-control" placeholder="Name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" class="form-control" placeholder="Email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="password" class="form-control" placeholder="Password" name="password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <center>
+                <p>&copy; 2024 EV Charging Slot Booking. All rights reserved.</p>
+            </center>
+        </div>
+    </footer>
+
+    <!-- Firebase Configuration -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDn3uft66gNDw6LmWhdbHgU_xtwisGAEzE",
+            authDomain: "trusty-stacker-426706-u7.firebaseapp.com",
+            databaseURL: "https://trusty-stacker-426706-u7-default-rtdb.firebaseio.com",
+            projectId: "trusty-stacker-426706-u7",
+            storageBucket: "trusty-stacker-426706-u7.appspot.com",
+            messagingSenderId: "51436764939",
+            appId: "1:51436764939:web:1a2e67c8d7127b4e35ac0e"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        document.getElementById('registerForm').addEventListener('submit', submitForm);
+
+        function submitForm(e) {
+            e.preventDefault();
+
+            const name = document.querySelector('input[name="name"]').value;
+            const email = document.querySelector('input[name="email"]').value;
+            const password = document.querySelector('input[name="password"]').value;
+
+            saveUser(name, email, password);
+        }
+
+        function saveUser(name, email, password) {
+            const userId = new Date().getTime();
+            set(ref(database, 'users/' + userId), {
+                name: name,
+                email: email,
+                password: password
+            }).then(() => {
+                alert("User registered successfully!");
+                localStorage.setItem('user', JSON.stringify({ name, email }));
+                window.location.href = 'index.html';
+            }).catch((error) => {
+                alert("Error: " + error.message);
+            });
+        }
+    </script>
+</body>
+
+</html>

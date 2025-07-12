@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EV Charging Slot Booking</title>
+  <script src="auth.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="index.html">EV Charging</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="search.html">search</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="index.html">Home</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+  <div class="container">
+    <h2 class="text-center" id="stationName">Available Slots</h2>
+    <div id="slotsContainer" class="mt-4">
+      <!-- Slots will be displayed here -->
+    </div>
+
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      // Retrieve the station parameter from the URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const station = urlParams.get('station');
+
+      // Set the station name based on the station parameter
+      const stationNames = {
+        'mg-road': 'MG Road Charging Station',
+        'koramangala': 'Koramangala Charging Station',
+        'indiranagar': 'Indiranagar Charging Station'
+      };
+      $('#stationName').text(stationNames[station]);
+
+      // Fetch and display slots based on the station
+      fetchSlots(station);
+    });
+
+    function fetchSlots(station) {
+      // Example data - replace this with your actual data source
+      const slotsData = {
+        'mg-road': [
+          { time: '09:00 AM - 10:00 AM', available: true },
+          { time: '10:00 AM - 11:00 AM', available: false },
+          { time: '11:00 AM - 12:00 PM', available: true }
+        ],
+        'koramangala': [
+          { time: '09:00 AM - 10:00 AM', available: true },
+          { time: '10:00 AM - 11:00 AM', available: true },
+          { time: '11:00 AM - 12:00 PM', available: false }
+        ],
+        'indiranagar': [
+          { time: '09:00 AM - 10:00 AM', available: false },
+          { time: '10:00 AM - 11:00 AM', available: true },
+          { time: '11:00 AM - 12:00 PM', available: true }
+        ]
+      };
+
+      const slots = slotsData[station] || [];
+      const slotsContainer = $('#slotsContainer');
+
+      slots.forEach(slot => {
+        const slotElement = $('<div class="slot"></div>');
+        slotElement.text(slot.time);
+        slotElement.addClass(slot.available ? 'available' : 'unavailable');
+        slotsContainer.append(slotElement);
+      });
+    }
+  </script>
+  <style>
+    .slot {
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      text-align: center;
+    }
+    .available {
+      background-color: #d4edda;
+      color: #155724;
+    }
+    .unavailable {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+  </style>
+</body>
+</html>

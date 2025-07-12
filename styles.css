@@ -1,0 +1,66 @@
+
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+  }
+  .bg {
+    background-image: url('bg.jpg');
+    height: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+  .jumbotron {
+    background: rgba(0, 0, 0, 0.4);
+    color: white;
+    padding: 200px;
+    border-radius: 0.5rem;
+  }
+  .footer {
+    background-color: #343a40;
+    color: white;
+    text-align: center;
+    padding: 5px;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+  }
+  .login-container {
+    background: rgba(255, 255, 255, 0.8);
+    padding: 2rem;
+    border-radius: 0.5rem;
+    margin-top: 10%;
+  }
+  .register-container {
+    background: rgba(255, 255, 255, 0.8);
+    padding: 2rem;
+    border-radius: 0.7rem;
+    margin-top: 5%;
+}
+.container {
+    margin-top: 50px;
+  }
+  #map {
+    height: 500px;
+    width: 100%;
+  }
+  .search-container {
+    margin-right: 20px;
+  }
+  .row {
+    height: 100%;
+  }
+  .map-container {
+    position: absolute;
+    top: 77px;
+    right: 10px;
+    width: 75%;
+    height: 500px;
+  }
+  .search-container {
+    position: absolute;
+    top: 77px;
+    left: 10px;
+    width: 20%;
+  }

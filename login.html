@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - EV Charging Slot Booking</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="bg">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <a class="navbar-brand" href="index.html">EV Charging</a>
+    </nav>
+
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-6 login-container">
+          <h2 class="text-center">Login</h2>
+          <form id="loginForm">
+            <div class="form-group">
+              <label for="email">Email:</label>
+              <input type="email" class="form-control" id="email" required>
+              <div class="invalid-feedback">Invalid email or password.</div>
+            </div>
+            <div class="form-group">
+              <label for="password">Password:</label>
+              <input type="password" class="form-control" id="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Login</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <center>
+      <p>&copy; 2024 EV Charging Slot Booking. All rights reserved.</p>
+    </center>
+  </footer>
+
+  <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDn3uft66gNDw6LmWhdbHgU_xtwisGAEzE",
+      authDomain: "trusty-stacker-426706-u7.firebaseapp.com",
+      databaseURL: "https://trusty-stacker-426706-u7-default-rtdb.firebaseio.com",
+      projectId: "trusty-stacker-426706-u7",
+      storageBucket: "trusty-stacker-426706-u7.appspot.com",
+      messagingSenderId: "51436764939",
+      appId: "1:51436764939:web:1a2e67c8d7127b4e35ac0e"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+
+    document.getElementById('loginForm').addEventListener('submit', submitForm);
+
+    function submitForm(e) {
+      e.preventDefault();
+
+      const emailInput = document.getElementById('email');
+      const passwordInput = document.getElementById('password');
+      const invalidFeedback = document.querySelector('.invalid-feedback');
+
+      const email = emailInput.value;
+      const password = passwordInput.value;
+
+      authenticateUser(email, password, emailInput, passwordInput, invalidFeedback);
+    }
+
+    function authenticateUser(email, password, emailInput, passwordInput, invalidFeedback) {
+      const dbRef = ref(database);
+      get(child(dbRef, 'users')).then((snapshot) => {
+        if (snapshot.exists()) {
+          const users = snapshot.val();
+          let authenticated = false;
+          let userName = '';
+
+          for (let userId in users) {
+            if (users[userId].email === email && users[userId].password === password) {
+              authenticated = true;
+              userName = users[userId].name;
+              break;
+            }
+          }
+
+          if (authenticated) {
+            localStorage.setItem('user', JSON.stringify({ name: userName, email }));
+            window.location.href = 'index.html';
+          } else {
+            emailInput.classList.add('is-invalid');
+            passwordInput.classList.add('is-invalid');
+            invalidFeedback.style.display = 'block';
+          }
+        } else {
+          emailInput.classList.add('is-invalid');
+          passwordInput.classList.add('is-invalid');
+          invalidFeedback.style.display = 'block';
+        }
+      }).catch((error) => {
+        emailInput.classList.add('is-invalid');
+        passwordInput.classList.add('is-invalid');
+        invalidFeedback.style.display = 'block';
+        console.error("Error: " + error.message);
+      });
+    }
+  </script>
+</body>
+</html>
